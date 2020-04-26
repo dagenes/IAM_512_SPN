@@ -1,3 +1,6 @@
+/*
+ * Created by HardCore on 18/04/2020.
+ */
 #include "LinearCryptanalysis.h"
 #include "SPN.h"
 #include "Utility.h"

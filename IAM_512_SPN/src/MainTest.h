@@ -1,3 +1,6 @@
+/*
+ * Created by HardCore on 18/04/2020.
+ */
 #pragma once
 
 #include <string>
