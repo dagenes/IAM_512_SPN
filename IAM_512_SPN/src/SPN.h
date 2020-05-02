@@ -7,19 +7,21 @@
 #include <string>
 #include <vector>
 #include <iostream>
-#include <optional>
+//#include <optional>
 #include "rectangularvectors.h"
+//#include <experimental/optional>
+
 
 /**
 * COPYRIGHT : yesterday is yesterday, today is today.
 */
-namespace main
-{
+//namespace crypto
+//{
 
 
 	/**
 	 * A class containing simple substituiton-permutation network cipher.
-	 * 
+	 *
 	 * @author HC
 	 * @date 18 Nis 2020
 	 * @project_name IAM_512_SPN
@@ -38,25 +40,26 @@ namespace main
 		 * @param key
 		 * @return
 		 */
-		virtual std::wstring encrypt(int plainText, const std::wstring &key);
+		virtual uint64_t encrypt(uint64_t plainText, std::vector<uint64_t> key);
 
 		virtual void decrypt();
 
 	private:
-		std::vector<std::wstring> subKeys(const std::wstring &key);
+
+		std::vector<uint64_t> subKeys(const std::vector<uint64_t> key);
 
 		/**
 		 * @param plainText
 		 * @param isInverse
 		 * @return
 		 */
-		int performSbox(std::optional<int> &pt, bool isInverse);
+		int performSbox(int pt, bool isInverse);
 
 		/**
 		 * @param pt
 		 * @return
 		 */
-		int performPbox(std::optional<int> &pt);
+		int performPbox(int pt);
 	};
 
-}
+//}

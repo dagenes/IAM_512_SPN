@@ -11,13 +11,13 @@
 /**
 * COPYRIGHT : yesterday is yesterday, today is today.
 */
-namespace main
+namespace crypto
 {
 
 	class MainTest
 	{
 
-		static void main(std::vector<std::wstring> &args);
+		static void main();
 
 	};
 

@@ -3,8 +3,8 @@
  */
 #include "AbstractSPN.h"
 
-namespace main
-{
+//namespace crypto
+//{
 
 	void AbstractSPN::initpBox()
 	{
@@ -70,4 +70,4 @@ namespace main
 	{
 		return pBox;
 	}
-}
+//}

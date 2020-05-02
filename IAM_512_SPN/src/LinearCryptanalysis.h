@@ -11,13 +11,15 @@
 #include "rectangularvectors.h"
 
 //JAVA TO C++ CONVERTER NOTE: Forward class declarations:
-namespace main { class SPN; }
+//namespace crypto {
+class SPN;
+//}
 
 /**
 * COPYRIGHT : yesterday is yesterday, today is today.
 */
-namespace main
-{
+//namespace crypto
+//{
 
 
 	/**
@@ -41,10 +43,9 @@ namespace main
 			delete spn;
 		}
 
-//JAVA TO C++ CONVERTER TODO TASK: No base class can be determined:
-		LinearCryptanalysis(SPN *spn, int iterNumber, bool verbose); //super();
+		LinearCryptanalysis(SPN *spn, int iterNumber, bool verbose);
 
-		virtual void attack(const std::wstring &key);
+		virtual int attack(const std::vector<uint64_t> key);
 
 		/**
 		 * @param sBox
@@ -55,4 +56,4 @@ namespace main
 
 	};
 
-}
+//}
