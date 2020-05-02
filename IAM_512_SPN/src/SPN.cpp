@@ -57,17 +57,14 @@ uint64_t SPN::encrypt(uint64_t plainText, std::vector<uint64_t> key) {
 	// fourth key-mixing and last s-box
 	cipherText = utility->XOR(cipherText, subKeys[3]);
 	if (verbose)
-		std::wcout << L"4th XOR " << cipherText << L" "
-				<< utility->intToHex(cipherText) << std::endl;
+		std::wcout << "4th XOR " << cipherText << std::endl;
 	cipherText = performSbox(cipherText, false);
 	if (verbose)
-		std::wcout << L"Last SBOX " << cipherText << L" "
-				<< utility->intToHex(cipherText) << std::endl;
+		std::wcout << "Last SBOX " << cipherText  << std::endl;
 	// last key mixing
 	cipherText = utility->XOR(cipherText, subKeys[4]);
 	if (verbose)
-		std::wcout << L"Last XOR " << cipherText << L" "
-				<< utility->intToHex(cipherText) << std::endl;
+		std::wcout << "Last XOR " << cipherText  << std::endl;
 
 	delete utility;
 //	return utility->intToHex(cipherText);

@@ -23,7 +23,6 @@ LinearCryptanalysis::LinearCryptanalysis(SPN *spn, int iterNumber,
 
 int LinearCryptanalysis::attack(const std::vector<uint64_t> key) {
 
-	Utility *utility = new Utility();
 	// get s-box and its inverse from SPN object
 	std::unordered_map<int, int> sBox = spn->getsBox();
 	std::unordered_map<int, int> sBoxInverse = spn->getsBoxInverse();
@@ -75,21 +74,20 @@ int LinearCryptanalysis::attack(const std::vector<uint64_t> key) {
 		bias[i] = std::abs((lAprx - iterNumber / 2.0) / iterNumber);
 	}
 
-	double maxResult = 0;
-	int maxIndex = 0;
+	double max = 0;
+	int index = 0;
 	for (int i = 0; i < bias.size(); i++) {
-		if (bias[i] > maxResult) {
-			maxResult = bias[i];
-			maxIndex = i;
+		if (bias[i] > max) {
+			max = bias[i];
+			index = i;
 		}
 	}
 
 	if (verbose)
-		std::wcout << L"Highest bias is " << maxResult << L", subkey is "
-				<< std::hex << maxIndex << std::endl;
+		std::wcout << L"Highest bias is " << max << L", subkey is 0x"
+				<< std::hex << index << std::endl;
 
-	return maxIndex;
-
+	return index;
 }
 
 std::vector<std::vector<int>> LinearCryptanalysis::initProbBias(
@@ -139,12 +137,14 @@ std::vector<std::vector<int>> LinearCryptanalysis::initProbBias(
 			}
 		}
 
+		std::cout << "Linear Approximation Table is: \n";
 		for (int i = 0; i < clone.size(); i++) {
 			for (int j = 0; j < clone[i].size(); j++) {
-				std::cout << std::setfill('0') << std::setw(2)<< clone[i][j] << " ";
+				std::cout << std::dec << std::setfill('0') << std::setw(2)<< clone[i][j] << " ";
 			}
 			std::cout << std::endl;
 		}
+			std::cout << std::endl;
 	}
 
 	delete utility;

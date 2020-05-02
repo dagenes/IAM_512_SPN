@@ -7,7 +7,6 @@
 #include <vector>
 #include <iostream>
 //#include <optional>
-#include "stringhelper.h"
 #include "rectangularvectors.h"
 #include <experimental/optional>
 

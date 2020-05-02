@@ -58,7 +58,7 @@ void linearAttackExample(std::vector<uint64_t> key) {
 			<< "\n************************** LINEAR ATTACK EXAMPLE ***********************"
 			<< std::endl;
 	SPN *spn = new SPN(false);
-	LinearCryptanalysis *linear = new LinearCryptanalysis(spn, 10000, true);
+	LinearCryptanalysis *linear = new LinearCryptanalysis(spn, 23230, true);
 	int maxIndex = linear->attack(key);
 
 	uint64_t key_4 = key[1] & 0xffff;
