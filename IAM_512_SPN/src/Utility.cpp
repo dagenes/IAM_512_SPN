@@ -19,9 +19,7 @@ std::vector<uint64_t> Utility::generateRandomKey() {
 
 	std::mt19937_64 gen(std::random_device { }());
 	uint64_t randomNumber1 = gen();
-	std::cout << "RANDOM " << std::hex << randomNumber1 << std::endl;
 	uint64_t randomNumber2 = gen() % 9000 + 1000;
-	std::cout << "RANDOM 2 " << std::hex << randomNumber2 << std::endl;
 
 	return {randomNumber2, randomNumber1};
 //	return {0x81cf, 0xb457f1101c3b07f6};

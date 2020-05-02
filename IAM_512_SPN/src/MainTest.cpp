@@ -1,13 +1,15 @@
 /*
  * Created by HardCore on 18/04/2020.
  */
-//#include "MainTest.h"
-#include "Utility.h"
-#include "SPN.h"
-#include "LinearCryptanalysis.h"
-#include <string>
-#include <vector>
+
+#include <cstdint>
 #include <iostream>
+#include <random>
+#include <vector>
+
+#include "LinearCryptanalysis.h"
+#include "SPN.h"
+#include "Utility.h"
 
 //namespace crypto
 //{
@@ -24,7 +26,7 @@ int main() {
 	std::vector<uint64_t> key = utility->generateRandomKey();
 	std::wcout << "Random key is " << std::hex << key[0] << key[1] << std::endl;
 
-//	encryptExample(key);
+	encryptExample(key);
 	linearAttackExample(key);
 
 	delete utility;
@@ -41,7 +43,12 @@ void encryptExample(std::vector<uint64_t> key) {
 
 	SPN *spn = new SPN(false);
 	std::wcout << "SPN is constructed.." << std::endl;
-	uint64_t pt = 0x3E8;
+
+	// random plain text
+	std::mt19937_64 gen(std::random_device { }());
+	uint64_t pt = gen();
+
+	// initialize cipher text
 	uint64_t ct = 0x00;
 
 	std::wcout << "plain text is " << std::dec << pt << "(int) = " << std::hex
@@ -74,7 +81,7 @@ void linearAttackExample(std::vector<uint64_t> key) {
 
 	if ((index_i3 == key_i3)
 			&& (index_i1 == key_i1))
-		std::wcout << "Attack is successful!" << std::endl;
+		std::wcout << "Attack is successful.." << std::endl;
 	else
 		std::wcout << "TRY AGAIN :)" << std::endl;
 

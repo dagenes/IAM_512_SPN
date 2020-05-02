@@ -27,6 +27,31 @@ SPN::SPN(bool verbose) {
 
 uint64_t SPN::encrypt(uint64_t plainText, std::vector<uint64_t> key) {
 
+
+	// divide plaintext to 16 bit sub-blocks
+	std::vector<uint64_t> subBlocks;
+	while(plainText >0){
+		subBlocks.push_back(plainText & 0xffff);
+		plainText /= 0xffff;
+	}
+
+	uint64_t ct = 0x00;
+	uint64_t mult = 0;
+
+	// for each sub-block perform encryption
+	for (int i = 0; i < subBlocks.size(); i++) {
+		uint64_t cipherBlock = encryptBlock(subBlocks[i], key);
+		ct += cipherBlock << mult;
+		mult += 16;
+	}
+
+	return ct;
+
+}
+
+
+uint64_t SPN::encryptBlock(uint64_t plainText, std::vector<uint64_t> key) {
+
 	uint64_t cipherText = plainText;
 
 	if (verbose) {

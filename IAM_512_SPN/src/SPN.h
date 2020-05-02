@@ -46,6 +46,7 @@
 
 	private:
 
+		uint64_t encryptBlock(uint64_t plainText, std::vector<uint64_t> key);
 		std::vector<uint64_t> subKeys(const std::vector<uint64_t> key);
 
 		/**
