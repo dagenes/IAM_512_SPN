@@ -8,7 +8,6 @@
 #include <vector>
 #include <iostream>
 #include <cmath>
-#include "rectangularvectors.h"
 
 //JAVA TO C++ CONVERTER NOTE: Forward class declarations:
 //namespace crypto {
