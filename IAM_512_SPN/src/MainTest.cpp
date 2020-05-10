@@ -8,6 +8,7 @@
 #include <vector>
 
 #include "LinearCryptanalysis.h"
+#include "DifferentialCryptanalysis.h"
 #include "SPN.h"
 #include "Utility.h"
 
@@ -16,6 +17,7 @@
 
 void encryptExample(std::vector<uint64_t> key);
 void linearAttackExample(std::vector<uint64_t> key);
+void differentialAttackExample(std::vector<uint64_t> key);
 
 int main() {
 
@@ -28,6 +30,7 @@ int main() {
 
 	encryptExample(key);
 	linearAttackExample(key);
+	differentialAttackExample(key);
 
 	delete utility;
 	std::wcout
@@ -65,7 +68,7 @@ void linearAttackExample(std::vector<uint64_t> key) {
 			<< "\n************************** LINEAR ATTACK EXAMPLE ***********************"
 			<< std::endl;
 	SPN *spn = new SPN(false);
-	LinearCryptanalysis *linear = new LinearCryptanalysis(spn, 23230, true);
+	LinearCryptanalysis *linear = new LinearCryptanalysis(spn, 23230, false);
 	int maxIndex = linear->attack(key);
 
 	uint64_t key_4 = key[1] & 0xffff;
@@ -77,15 +80,45 @@ void linearAttackExample(std::vector<uint64_t> key) {
 
 	std::wcout << "key is 0x" << std::hex << key[0] << key[1] << std::endl;
 	std::wcout << "key last 4 digit is 0x" << key_4 << std::endl;
-	std::wcout << "max index is 0x" << index_i3 << " and 0x" << index_i1 << std::endl;
+	std::wcout << "Guessed subkey is 0x" << index_i3 << " and 0x" << index_i1 << std::endl;
 
 	if ((index_i3 == key_i3)
 			&& (index_i1 == key_i1))
-		std::wcout << "Attack is successful.." << std::endl;
+		std::wcout << "Linear attack is successful.." << std::endl;
 	else
 		std::wcout << "TRY AGAIN :)" << std::endl;
 
 	delete linear;
+
+}
+
+void differentialAttackExample(std::vector<uint64_t> key) {
+
+	std::wcout
+			<< "\n************************** DIFFERENTIAL ATTACK EXAMPLE ***********************"
+			<< std::endl;
+	SPN *spn = new SPN(false);
+	DifferentialCryptanalysis *differential = new DifferentialCryptanalysis(spn, 2323, false);
+	int maxIndex = differential->attack(key);
+
+	uint64_t key_4 = key[1] & 0xffff;
+	uint64_t key_i3 = (key_4 >> 8) & 0xf;
+	uint64_t key_i1 = key_4 & 0xf;
+
+	uint64_t index_i3 = (maxIndex >> 4) & 0xF;
+	uint64_t index_i1 = maxIndex & 0xF;
+
+	std::wcout << "key is 0x" << std::hex << key[0] << key[1] << std::endl;
+	std::wcout << "key last 4 digit is 0x" << key_4 << std::endl;
+	std::wcout << "Guessed subkey is 0x" << index_i3 << " and 0x" << index_i1 << std::endl;
+
+	if ((index_i3 == key_i3)
+			&& (index_i1 == key_i1))
+		std::wcout << "Differential attack is successful.." << std::endl;
+	else
+		std::wcout << "TRY AGAIN :)" << std::endl;
+
+	delete differential;
 
 }
 
