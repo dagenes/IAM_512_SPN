@@ -32,7 +32,7 @@ uint64_t SPN::encrypt(uint64_t plainText, std::vector<uint64_t> key) {
 	std::vector<uint64_t> subBlocks;
 	while(plainText >0){
 		subBlocks.push_back(plainText & 0xffff);
-		plainText /= 0xffff;
+		plainText >>= 16;
 	}
 
 	uint64_t ct = 0x00;
@@ -50,6 +50,7 @@ uint64_t SPN::encrypt(uint64_t plainText, std::vector<uint64_t> key) {
 }
 
 
+//plain text is 16 bit
 uint64_t SPN::encryptBlock(uint64_t plainText, std::vector<uint64_t> key) {
 
 	uint64_t cipherText = plainText;
@@ -90,6 +91,7 @@ uint64_t SPN::encryptBlock(uint64_t plainText, std::vector<uint64_t> key) {
 	cipherText = utility->XOR(cipherText, subKeys[4]);
 	if (verbose)
 		std::wcout << "Last XOR " << cipherText  << std::endl;
+
 
 	delete utility;
 //	return utility->intToHex(cipherText);
