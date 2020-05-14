@@ -23,6 +23,10 @@ DifferentialCryptanalysis::DifferentialCryptanalysis(SPN *spn, int iterNumber,
 
 int DifferentialCryptanalysis::attack(const std::vector<uint64_t> key) {
 
+	//start timer
+	std::clock_t start;
+	start = std::clock();
+
 	// get s-box inverse from SPN object
 	std::unordered_map<int, int> sBoxInverse = spn->getsBoxInverse();
 
@@ -40,9 +44,9 @@ int DifferentialCryptanalysis::attack(const std::vector<uint64_t> key) {
 		uint64_t c1 = spn->encrypt(p1, key);
 		uint64_t c2 = spn->encrypt(p2, key);
 
-		if (verbose)
-			std::cout << std::hex << p1 << "->" << c1 << "   " << p2 << "->"
-					<< c2 << std::endl;
+//		if (verbose)
+//			std::cout << std::hex << p1 << "->" << c1 << "   " << p2 << "->"
+//					<< c2 << std::endl;
 
 		if ((c1 & 0xF0F0) == (c2 & 0xF0F0)) {
 			for (uint64_t j = 0; j < 16; j++) {
@@ -60,6 +64,7 @@ int DifferentialCryptanalysis::attack(const std::vector<uint64_t> key) {
 		}
 	}
 
+	// find max index
 	double max = 0;
 	int index = 0;
 	int length = 256;
@@ -72,6 +77,12 @@ int DifferentialCryptanalysis::attack(const std::vector<uint64_t> key) {
 
 	if (verbose)
 		std::wcout << "max index is 0x" << std::hex << index << std::endl;
+
+	if (verbose) {
+		//end timer
+		double duration = (std::clock() - start) / (double) CLOCKS_PER_SEC;
+		std::cout << "~~~~~~~~~Differential attack takes " << duration << " sec" << std::endl;
+	}
 
 	return index;
 
