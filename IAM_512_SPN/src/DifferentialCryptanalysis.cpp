@@ -27,11 +27,15 @@ int DifferentialCryptanalysis::attack(const std::vector<uint64_t> key) {
 	std::clock_t start;
 	start = std::clock();
 
+	if (verbose)
+		std::cout << "# of plaintext that will be used in attack is "
+				<< iterNumber << std::endl;
+
 	// get s-box inverse from SPN object
 	std::unordered_map<int, int> sBoxInverse = spn->getsBoxInverse();
 
 	// initialize with all zeros
-	std::vector<int> countTargetBias(256);
+	std::vector<int> counterBias(256);
 
 	// iterate with given number
 	for (int i = 0; i < iterNumber; i++) {
@@ -48,16 +52,18 @@ int DifferentialCryptanalysis::attack(const std::vector<uint64_t> key) {
 //			std::cout << std::hex << p1 << "->" << c1 << "   " << p2 << "->"
 //					<< c2 << std::endl;
 
-		if ((c1 & 0xF0F0) == (c2 & 0xF0F0)) {
+		if ((c1 & 0xF0F0) == (c2 & 0xF0F0)) { // S41 and S43 must be zero in the paper
 			for (uint64_t j = 0; j < 16; j++) {
 				for (uint64_t k = 0; k < 16; k++) {
 					int u42_c1 = sBoxInverse[j ^ ((c1 & 0xF00) >> 8)];
 					int u44_c1 = sBoxInverse[k ^ ((c1 & 0xF))];
 					int u42_c2 = sBoxInverse[j ^ ((c2 & 0xF00) >> 8)];
 					int u44_c2 = sBoxInverse[k ^ ((c2 & 0xF))];
+
+					// equation 6 (delta U= [0000 0110 0000 0110] )
 					if ((u42_c1 ^ u42_c2) == 0x6 && (u44_c1 ^ u44_c2) == 0x6) {
 						int subkey = j * 16 + k;
-						countTargetBias[subkey] += 1;
+						counterBias[subkey] += 1;
 					}
 				}
 			}
@@ -69,19 +75,24 @@ int DifferentialCryptanalysis::attack(const std::vector<uint64_t> key) {
 	int index = 0;
 	int length = 256;
 	for (int i = 0; i < length; i++) {
-		if (countTargetBias[i] > max) {
-			max = countTargetBias[i];
+//		if ((double) counterBias[i] / iterNumber > 0.001)
+//			std::wcout << std::hex << i << std::dec << " "
+//					<< ((double) counterBias[i] / iterNumber) << std::endl;
+		if (counterBias[i] > max) {
+			max = counterBias[i];
 			index = i;
 		}
 	}
 
 	if (verbose)
-		std::wcout << "max index is 0x" << std::hex << index << std::endl;
+		std::wcout << "max index is 0x" << std::hex << index << std::dec
+				<< " with probability " << (max / iterNumber) << std::endl;
 
 	if (verbose) {
 		//end timer
 		double duration = (std::clock() - start) / (double) CLOCKS_PER_SEC;
-		std::cout << "~~~~~~~~~Differential attack takes " << duration << " sec" << std::endl;
+		std::cout << "~~~~~~~~~Differential attack takes " << duration << " sec"
+				<< std::endl;
 	}
 
 	return index;
