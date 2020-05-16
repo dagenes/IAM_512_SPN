@@ -32,8 +32,6 @@ class SPN;
 	private:
 		SPN *spn;
 
-		int iterNumber = 0;
-
 		bool verbose = false;
 
 	public:
@@ -42,7 +40,7 @@ class SPN;
 			delete spn;
 		}
 
-		LinearCryptanalysis(SPN *spn, int iterNumber, bool verbose);
+		LinearCryptanalysis(SPN *spn, bool verbose);
 
 		virtual int attack(const std::vector<uint64_t> key);
 
@@ -51,7 +49,7 @@ class SPN;
 		 * @return
 		 */
 	private:
-		std::vector<std::vector<int>> initProbBias(std::unordered_map<int, int> &sBox);
+		std::vector<std::vector<int>> initLAT(std::unordered_map<int, int> &sBox);
 
 	};
 

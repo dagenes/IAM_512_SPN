@@ -14,21 +14,40 @@
 //namespace crypto
 //{
 
-LinearCryptanalysis::LinearCryptanalysis(SPN *spn, int iterNumber,
-		bool verbose) {
+LinearCryptanalysis::LinearCryptanalysis(SPN *spn, bool verbose) {
 	this->spn = spn;
-	this->iterNumber = iterNumber;
 	this->verbose = verbose;
 }
 
 int LinearCryptanalysis::attack(const std::vector<uint64_t> key) {
 
+	//start timer
+	std::clock_t start;
+	start = std::clock();
+
 	// get s-box and its inverse from SPN object
 	std::unordered_map<int, int> sBox = spn->getsBox();
 	std::unordered_map<int, int> sBoxInverse = spn->getsBoxInverse();
 
-	// init prob bias matrix via sbox
-	std::vector<std::vector<int>> probBias = initProbBias(sBox);
+	// init prob bias (LAT) matrix via sbox
+	std::vector<std::vector<int>> probBias = initLAT(sBox);
+
+	// find max bias
+	int iterNumber = 0;
+	for (int m = 1; m < probBias.size(); m++) {
+		for (int l = 1; l < probBias.size(); l++) {
+			if (probBias[m][l] > iterNumber) {
+				iterNumber = probBias[m][l];
+			}
+		}
+	}
+
+	iterNumber = 1.0/((iterNumber/16.0)*(iterNumber/16.0));
+	iterNumber *= 4;
+
+	if (verbose)
+		std::cout << "# of plaintext that will be used in attack is "
+				<< iterNumber << std::endl;
 
 // initialize with all zeros
 	std::vector<int> countTargetBias(256);
@@ -40,8 +59,9 @@ int LinearCryptanalysis::attack(const std::vector<uint64_t> key) {
 		uint64_t cipher_5_8 = (cipher >> 8) & 0xf;
 		uint64_t cipher_13_16 = cipher & 0xf;
 
-//		std::cout << "###### " << std::hex << plain << " -> " << cipher << " "
-//				<< cipher_5_8 << " " << cipher_13_16 << std::endl;
+//		if (verbose)
+//			std::cout << "###### " << std::hex << plain << " -> " << cipher
+//					<< " " << cipher_5_8 << " " << cipher_13_16 << std::endl;
 
 		for (int j = 0; j < 256; j++) {
 			uint64_t target = j;
@@ -74,6 +94,7 @@ int LinearCryptanalysis::attack(const std::vector<uint64_t> key) {
 		bias[i] = std::abs((lAprx - iterNumber / 2.0) / iterNumber);
 	}
 
+	// find max index
 	double max = 0;
 	int index = 0;
 	for (int i = 0; i < bias.size(); i++) {
@@ -86,17 +107,23 @@ int LinearCryptanalysis::attack(const std::vector<uint64_t> key) {
 	if (verbose)
 		std::wcout << L"Highest bias is " << max << L", subkey is 0x"
 				<< std::hex << index << std::endl;
+	if (verbose) {
+		//end timer
+		double duration = (std::clock() - start) / (double) CLOCKS_PER_SEC;
+		std::cout << "~~~~~~~~~Linear attack takes " << duration << " sec"
+				<< std::endl;
+	}
 
 	return index;
 }
 
-std::vector<std::vector<int>> LinearCryptanalysis::initProbBias(
+std::vector<std::vector<int>> LinearCryptanalysis::initLAT(
 		std::unordered_map<int, int> &sBox) {
 
 	Utility *utility = new Utility();
 
 	// 16x16 bias matrix
-	std::vector<std::vector<int>> probBias(16, std::vector<int> (16, 0));
+	std::vector<std::vector<int>> probBias(16, std::vector<int>(16, 0));
 
 	for (auto entry : sBox) {
 
@@ -130,21 +157,23 @@ std::vector<std::vector<int>> LinearCryptanalysis::initProbBias(
 
 	if (verbose) {
 		// clone this array for print.
-		std::vector<std::vector<int>> clone(16, std::vector<int> (16, 0));
+		std::vector<std::vector<int>> clone(16, std::vector<int>(16, 0));
 		for (int i = 0; i < 16; i++) {
 			for (int j = 0; j < 16; j++) {
 				clone[i][j] = probBias[i][j] - 8;
+				probBias[i][j] = probBias[i][j] - 8;
 			}
 		}
 
 		std::cout << "Linear Approximation Table is: \n";
 		for (int i = 0; i < clone.size(); i++) {
 			for (int j = 0; j < clone[i].size(); j++) {
-				std::cout << std::dec << std::setfill('0') << std::setw(2)<< clone[i][j] << " ";
+				std::cout << std::dec << std::setfill('0') << std::setw(2)
+						<< clone[i][j] << " ";
 			}
 			std::cout << std::endl;
 		}
-			std::cout << std::endl;
+		std::cout << std::endl;
 	}
 
 	delete utility;
