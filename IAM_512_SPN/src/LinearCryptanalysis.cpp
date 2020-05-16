@@ -42,8 +42,8 @@ int LinearCryptanalysis::attack(const std::vector<uint64_t> key) {
 		}
 	}
 
-	iterNumber = 1.0/((iterNumber/16.0)*(iterNumber/16.0));
-	iterNumber *= 4;
+	iterNumber = 1.0 / ((iterNumber / 16.0) * (iterNumber / 16.0));
+	iterNumber *= 2000;
 
 	if (verbose)
 		std::cout << "# of plaintext that will be used in attack is "
@@ -98,6 +98,9 @@ int LinearCryptanalysis::attack(const std::vector<uint64_t> key) {
 	double max = 0;
 	int index = 0;
 	for (int i = 0; i < bias.size(); i++) {
+		if ( bias[i] > 0.015)
+			std::wcout << std::hex << i << std::dec << " "
+					<< (bias[i]) << std::endl;
 		if (bias[i] > max) {
 			max = bias[i];
 			index = i;
